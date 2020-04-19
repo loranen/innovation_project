@@ -37,14 +37,22 @@ class tkyamnet(tk.Tk):
         self.figure, self.axs = plt.subplots(10, figsize=(10,10))
         plt.tight_layout()
         
-        #Prepare colors
         
-        with open('colors.txt', 'r') as txtfile:
-            self.colors = txtfile.readlines()
-        
+        #Prepare colors. Colors are xkcd-colors in random order    
+        with open('colors.txt', 'r') as colorfile:
+            self.colors = colorfile.readlines()
+               
         #Strip newlines for more efficient use
         for i in range(len(self.colors)):
             self.colors[i] = self.colors[i][:-1]
+            
+        #Prepare Yamnet class names    
+        with open('classes.txt', 'r') as classesfile:
+            self.classes = classesfile.readlines()
+            
+        #Strip newlines for more efficient use
+        for i in range(len(self.classes)):
+            self.classes[i] = self.classes[i][:-1]
         
         #Base frame to build the used frames from
         container = tk.Frame(self)
@@ -102,7 +110,7 @@ class tkyamnet(tk.Tk):
         #Queue another iteration a second from now
         self.after(1000, self.animate)
         
-        """TODO run Yamnet here, replace new_samples with classification results"""
+        """TODO run Yamnet here, replace new_samples with classification results in NumPy array"""
         
         #Demo sinewaves calculation + update
         new_samples = abs(np.sin(self.phases))
@@ -136,8 +144,8 @@ class tkyamnet(tk.Tk):
             a.set_ylim((0, 1.1))
             
             
-            """TODO get name of class index"""
-            self.frames[GraphPage].labels[i]['text'] = "Num." + str(indexes[i])
+            #Set the label next to subplot as class name
+            self.frames[GraphPage].labels[i]['text'] = self.classes[indexes[i]]
              
         
         #Draw canvas to show updated graph
