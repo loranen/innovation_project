@@ -17,6 +17,7 @@ import tkinter as tk
 
 #Import numpy for miscellanious number/data crunching
 import numpy as np
+from recorder import Recorder
 
 """
 Tkinter base class. The functionality could be done as a wrapper, but in order
@@ -83,6 +84,9 @@ class tkyamnet(tk.Tk):
         self.scores = np.zeros(10)
         
         """TODO start audio recording"""
+        self.record_Button = tk.Button(container, text='Start', command=self.record_sample() )
+        '''TOTO fix the button position'''
+        self.record_Button.grid(column=6, row=2)
         
         #After a second, start animating 
         self.after(1000, self.animate)
@@ -105,8 +109,11 @@ class tkyamnet(tk.Tk):
         
         #Runs Yamnet visualization, queued as an event every ~second
         
-        """TODO get audio clip here, start recording next one"""
+        """TODO get audio clip here"""
+        '''TODO cut 10s sample into 0.9s clips,before starting recording new one'''
+        #self.clips=
         
+        self.record_sample()
         #Queue another iteration a second from now
         self.after(1000, self.animate)
         
@@ -190,6 +197,13 @@ class tkyamnet(tk.Tk):
                     break
         
         return indexes
+    
+    def record_sample(self):
+        self.record_Button.state(['disabled'])
+        rec = Recorder(channels=2)
+        with rec.open('sample.wav','wb') as recfile:
+            recfile.record(duration=10)
+        self.sample = 'sample.wav'
                     
                     
 """
