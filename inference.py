@@ -1,6 +1,5 @@
 from __future__ import division, print_function
 
-import sys
 
 import numpy as np
 import resampy
@@ -12,8 +11,7 @@ import yamnet as yamnet_model
 import os
 from keras.models import load_model
 
-def main(argv):
-  print("moi")
+def classification(argv):
   yamnet = yamnet_model.yamnet_frames_model(params)
   yamnet.load_weights('yamnet.h5')
   yamnet_classes = yamnet_model.class_names('yamnet_class_map.csv')
@@ -21,7 +19,7 @@ def main(argv):
 
   # Decode the WAV file.
   #wav_data, sr = sf.read(file_name, dtype=np.int16)
-  # assert wav_data.dtype == np.int16, 'Bad sample type: %r' % wav_data.dtype
+  #assert wav_data.dtype == np.int16, 'Bad sample type: %r' % wav_data.dtype
   waveform = argv / 32768.0  # Convert to [-1.0, +1.0]
   sr = 44100
   
@@ -40,7 +38,7 @@ def main(argv):
   prediction = np.mean(scores, axis=0)
   # Report the highest-scoring classes and their scores.
   sound_events = np.argsort(prediction)[::-1]
-  
+'''
   present = []
   prob = prediction[sound_events[0]]
   for event in sound_events:
@@ -51,9 +49,13 @@ def main(argv):
   print('Stream :\n' + 
         '\n'.join('  {:12s}: {:.3f}'.format(yamnet_classes[i], prediction[i])
                   for i in present[:5]))
-  return "moi"
+'''
+  return prediction
 
-'''
+
+
 if __name__ == '__main__':
-  main(['test/5a8910e1.wav'])
-'''
+  file_name = r'C:\Users\Leevi\Documents\GitHub\models\research\audioset\yamnet\test\5a8910e1.wav'
+  wav_data, sr = sf.read(file_name, dtype=np.int16)
+  assert wav_data.dtype == np.int16, 'Bad sample type: %r' % wav_data.dtype
+  prediction = classification(wav_data)
