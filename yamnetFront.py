@@ -84,10 +84,9 @@ class tkyamnet(tk.Tk):
         self.scores = np.zeros(10)
         
         """TODO start audio recording"""
-        self.record_Button = tk.Button(container, text='Start', command=self.record_sample() )
-        '''TOTO fix the button position'''
-        self.record_Button.grid(column=6, row=2)
-        
+        self.rec = Recorder(channels=2)
+        self.recfile = self.rec.open('sample.wav','wb')
+        self.recfile.start_recording()
         #After a second, start animating 
         self.after(1000, self.animate)
         
@@ -104,16 +103,20 @@ class tkyamnet(tk.Tk):
         
         self.quit()
         self.destroy()
+        self.recfile.close()
         
     def animate(self):
         
         #Runs Yamnet visualization, queued as an event every ~second
         
-        """TODO get audio clip here"""
-        '''TODO cut 10s sample into 0.9s clips,before starting recording new one'''
-        #self.clips=
+        self.recfile.stop_recording()
+        self.recfile.close()
         
-        self.record_sample()
+        '''TODO Reading sample.wav file which is a mono signal (used in Yamnet by default) into desired format'''
+        
+        self.recfile = self.rec.open('sample.wav','wb')
+        self.recfile.start_recording()
+        
         #Queue another iteration a second from now
         self.after(1000, self.animate)
         
@@ -198,15 +201,8 @@ class tkyamnet(tk.Tk):
         
         return indexes
     
-    def record_sample(self):
-        self.record_Button.state(['disabled'])
-        rec = Recorder(channels=2)
-        with rec.open('sample.wav','wb') as recfile:
-            recfile.record(duration=10)
-        self.sample = 'sample.wav'
-                    
-                    
-"""
+                 
+'''
 #A start page for navigating, if necessary
 class StartPage(tk.Frame):
     def __init__(self, parent, controller):
@@ -221,7 +217,14 @@ class StartPage(tk.Frame):
         
         button2 = ttk.Button(self, text="Exit", command=lambda:controller.close_windows())
         button2.pack()
-"""        
+        
+        record_Button = ttk.Button(self, text='Start', command=self.record_sample() )
+        record_Button.pack()
+        
+        stop_Button = ttk.Button(self, text='Start', command=self.record_sample() )
+        stop_Button.pack()
+'''
+       
         
 class GraphPage(tk.Frame):
     def __init__(self, parent, controller):
