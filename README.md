@@ -18,7 +18,7 @@ YAMNet depends on the following Python packages:
 * [`pysoundfile`](https://pysoundfile.readthedocs.io/)
 * [`matplotlib`](https://matplotlib.org/)
 * [`soundfile`](https://pysoundfile.readthedocs.io/en/latest/)
-* [`params`](https://pypi.org/project/py-params/
+* [`params`](https://pypi.org/project/py-params/)
 * [`recorder`](https://pypi.org/project/recorder/)
 
 
