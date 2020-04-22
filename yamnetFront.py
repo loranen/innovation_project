@@ -170,7 +170,7 @@ class tkyamnet(tk.Tk):
         #Draw canvas to show updated graph
         self.frames[GraphPage].canvas.draw()
         
-        print(time.time() - time_of_start)
+        # print(time.time() - time_of_start)
         
         
     def findtopX(self, values, X):
