@@ -20,6 +20,7 @@ import numpy as np
 from recorder import Recorder
 
 import inference
+import soundfile as sf
 
 """
 Tkinter base class. The functionality could be done as a wrapper, but in order
@@ -125,7 +126,10 @@ class tkyamnet(tk.Tk):
         """TODO run Yamnet here, replace new_samples with classification results in NumPy array"""
         
         #Demo sinewaves calculation + update
-        new_samples = inference.classification('sample.wav')
+        wav_data, sr = sf.read('sample.wav', dtype=np.int16)
+        assert wav_data.dtype == np.int16, 'Bad sample type: %r' % wav_data.dtype
+        new_samples = inference.classification(wav_data)
+        
         self.phases += 0.1 
         
         #The ranking is decided by IIR-filtered samples

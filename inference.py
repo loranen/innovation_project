@@ -15,11 +15,6 @@ def classification(argv):
   yamnet = yamnet_model.yamnet_frames_model(params)
   yamnet.load_weights('yamnet.h5')
   #yamnet_classes = yamnet_model.class_names('yamnet_class_map.csv')
-  
-
-  # Decode the WAV file.
-  wav_data, sr = sf.read(argv, dtype=np.int16)
-  assert wav_data.dtype == np.int16, 'Bad sample type: %r' % wav_data.dtype
 
   waveform = wav_data / 32768.0  # Convert to [-1.0, +1.0]
   sr = 44100
@@ -38,7 +33,7 @@ def classification(argv):
   # Average them along time to get an overall classifier output for the clip.
   prediction = np.mean(scores, axis=0)
   # Report the highest-scoring classes and their scores.
-  sound_events = np.argsort(prediction)[::-1]
+  #sound_events = np.argsort(prediction)[::-1]
   return prediction
 '''
   present = []
