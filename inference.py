@@ -14,13 +14,14 @@ from keras.models import load_model
 def classification(argv):
   yamnet = yamnet_model.yamnet_frames_model(params)
   yamnet.load_weights('yamnet.h5')
-  yamnet_classes = yamnet_model.class_names('yamnet_class_map.csv')
+  #yamnet_classes = yamnet_model.class_names('yamnet_class_map.csv')
   
 
   # Decode the WAV file.
-  #wav_data, sr = sf.read(file_name, dtype=np.int16)
-  #assert wav_data.dtype == np.int16, 'Bad sample type: %r' % wav_data.dtype
-  waveform = argv / 32768.0  # Convert to [-1.0, +1.0]
+  wav_data, sr = sf.read(argv, dtype=np.int16)
+  assert wav_data.dtype == np.int16, 'Bad sample type: %r' % wav_data.dtype
+
+  waveform = wav_data / 32768.0  # Convert to [-1.0, +1.0]
   sr = 44100
   
   # Convert to mono and the sample rate expected by YAMNet.

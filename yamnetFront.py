@@ -125,7 +125,7 @@ class tkyamnet(tk.Tk):
         """TODO run Yamnet here, replace new_samples with classification results in NumPy array"""
         
         #Demo sinewaves calculation + update
-        new_samples = inference.classification(self.recfile)
+        new_samples = inference.classification('sample.wav')
         self.phases += 0.1 
         
         #The ranking is decided by IIR-filtered samples
