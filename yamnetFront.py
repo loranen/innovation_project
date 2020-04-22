@@ -4,7 +4,7 @@ Yamnet visualization via Tkinter for Signal Processing Innovation Project
 at Tampere University, spring 2020.
 """
 #Import matplotlib and relevant child libraries
-
+from __future__ import division, print_function
 import matplotlib
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -19,8 +19,13 @@ import tkinter as tk
 import numpy as np
 from recorder import Recorder
 
-import inference
+
 import soundfile as sf
+import params
+import yamnet as yamnet_model
+import resampy
+
+
 
 import time
 
@@ -38,6 +43,8 @@ class tkyamnet(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
         
         """TODO Initialize Yamnet"""
+        self.yamnet = yamnet_model.yamnet_frames_model(params)
+        self.yamnet.load_weights('yamnet.h5')
         
         #Prepare the visualization graph. Tight layout for fitting better
         self.figure, self.axs = plt.subplots(10, figsize=(10,10))
@@ -117,8 +124,7 @@ class tkyamnet(tk.Tk):
         self.recfile.close()
         
         #Reading sample.wav file which is a mono signal (used in Yamnet by default) into desired format
-        with open(self.recfile, 'r') as wavfile:
-            wav_data, sr = wavfile.read(dtype=np.int16)
+        wav_data, sr = sf.read('sample.wav', dtype=np.int16)
         
         self.recfile = self.rec.open('sample.wav','wb')
         self.recfile.start_recording()
@@ -127,8 +133,7 @@ class tkyamnet(tk.Tk):
         self.after(1000, self.animate)
         
         
-        assert wav_data.dtype == np.int16, 'Bad sample type: %r' % wav_data.dtype
-        new_samples = inference.classification(wav_data)
+        new_samples = self.classification(wav_data)
         
         #The ranking is decided by IIR-filtered samples
         self.scores = self.scores * 0.9 + new_samples
@@ -207,6 +212,26 @@ class tkyamnet(tk.Tk):
         
         return indexes
     
+    def classification(self,wav_data):
+        waveform = wav_data / 32768.0  # Convert to [-1.0, +1.0]
+        sr = 44100
+        
+        # Convert to mono and the sample rate expected by YAMNet.
+        if len(waveform.shape) > 1:
+            waveform = np.mean(waveform, axis=1)
+        if sr != params.SAMPLE_RATE:
+            waveform = resampy.resample(waveform, sr, params.SAMPLE_RATE)
+        # Predict YAMNet classes.
+        # Second output is log-mel-spectrogram array (used for visualizations).
+        # (steps=1 is a work around for Keras batching limitations.)
+        scores, _ = self.yamnet.predict(np.reshape(waveform, [1, -1]), steps=1)
+        # Scores is a matrix of (time_frames, num_classes) classifier scores.
+        # Average them along time to get an overall classifier output for the clip.
+        prediction = np.mean(scores, axis=0)
+        # Report the highest-scoring classes and their scores.
+        #sound_events = np.argsort(prediction)[::-1]
+        return prediction
+            
                  
 '''
 #A start page for navigating, if necessary

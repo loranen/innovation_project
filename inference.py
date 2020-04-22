@@ -9,7 +9,7 @@ import params
 import yamnet as yamnet_model
 
 import os
-from keras.models import load_model
+#from keras.models import load_model
 
 def classification(argv):
   yamnet = yamnet_model.yamnet_frames_model(params)
@@ -46,12 +46,5 @@ def classification(argv):
   print('Stream :\n' + 
         '\n'.join('  {:12s}: {:.3f}'.format(yamnet_classes[i], prediction[i])
                   for i in present[:5]))
-'''
+'''  
 
-
-
-if __name__ == '__main__':
-  file_name = r'C:\Users\Leevi\Documents\GitHub\models\research\audioset\yamnet\test\5a8910e1.wav'
-  wav_data, sr = sf.read(file_name, dtype=np.int16)
-  assert wav_data.dtype == np.int16, 'Bad sample type: %r' % wav_data.dtype
-  prediction = classification(wav_data)
