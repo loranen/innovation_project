@@ -19,6 +19,8 @@ import tkinter as tk
 import numpy as np
 from recorder import Recorder
 
+import inference
+
 """
 Tkinter base class. The functionality could be done as a wrapper, but in order
 to combine example codes, I've strayed from the best practice
@@ -84,7 +86,7 @@ class tkyamnet(tk.Tk):
         self.scores = np.zeros(10)
         
         """TODO start audio recording"""
-        self.rec = Recorder(channels=2)
+        self.rec = Recorder(channels=1)
         self.recfile = self.rec.open('sample.wav','wb')
         self.recfile.start_recording()
         #After a second, start animating 
@@ -123,7 +125,7 @@ class tkyamnet(tk.Tk):
         """TODO run Yamnet here, replace new_samples with classification results in NumPy array"""
         
         #Demo sinewaves calculation + update
-        new_samples = abs(np.sin(self.phases))
+        new_samples = inference.classification(self.recfile)
         self.phases += 0.1 
         
         #The ranking is decided by IIR-filtered samples

@@ -38,6 +38,7 @@ def classification(argv):
   prediction = np.mean(scores, axis=0)
   # Report the highest-scoring classes and their scores.
   sound_events = np.argsort(prediction)[::-1]
+  return prediction
 '''
   present = []
   prob = prediction[sound_events[0]]
@@ -50,7 +51,6 @@ def classification(argv):
         '\n'.join('  {:12s}: {:.3f}'.format(yamnet_classes[i], prediction[i])
                   for i in present[:5]))
 '''
-  return prediction
 
 
 
