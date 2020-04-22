@@ -22,6 +22,8 @@ from recorder import Recorder
 import inference
 import soundfile as sf
 
+import time
+
 """
 Tkinter base class. The functionality could be done as a wrapper, but in order
 to combine example codes, I've strayed from the best practice
@@ -76,17 +78,15 @@ class tkyamnet(tk.Tk):
         #Bring StartPage on top for user
         self.show_frame(GraphPage)
         
-        #Declare class variables used in animation
-        """TODO delete self.phases"""
-        self.phases = np.linspace(0, 3, 10)       
+        #Declare class variables used in animation   
         self.xList = np.linspace(-30, -1, 30)
         
-        """TODO reformat data to 520, 10"""
-        self.data = np.zeros((10,30))
-        """TODO reformat scores to 520"""
-        self.scores = np.zeros(10)
+        #Prepare the yamnet-format results, 521 classes for 30 seconds
+        self.data = np.zeros((521,30))
+        #Prepare the weights used to rank classification results
+        self.scores = np.zeros(521)
         
-        """TODO start audio recording"""
+        #Start audio recording
         self.rec = Recorder(channels=1)
         self.recfile = self.rec.open('sample.wav','wb')
         self.recfile.start_recording()
@@ -110,12 +110,15 @@ class tkyamnet(tk.Tk):
         
     def animate(self):
         
+        time_of_start = time.time()
         #Runs Yamnet visualization, queued as an event every ~second
         
         self.recfile.stop_recording()
         self.recfile.close()
         
-        '''TODO Reading sample.wav file which is a mono signal (used in Yamnet by default) into desired format'''
+        #Reading sample.wav file which is a mono signal (used in Yamnet by default) into desired format
+        with open(self.recfile, 'r') as wavfile:
+            wav_data, sr = wavfile.read(dtype=np.int16)
         
         self.recfile = self.rec.open('sample.wav','wb')
         self.recfile.start_recording()
@@ -123,14 +126,9 @@ class tkyamnet(tk.Tk):
         #Queue another iteration a second from now
         self.after(1000, self.animate)
         
-        """TODO run Yamnet here, replace new_samples with classification results in NumPy array"""
         
-        #Demo sinewaves calculation + update
-        wav_data, sr = sf.read('sample.wav', dtype=np.int16)
         assert wav_data.dtype == np.int16, 'Bad sample type: %r' % wav_data.dtype
         new_samples = inference.classification(wav_data)
-        
-        self.phases += 0.1 
         
         #The ranking is decided by IIR-filtered samples
         self.scores = self.scores * 0.9 + new_samples
@@ -166,6 +164,8 @@ class tkyamnet(tk.Tk):
         
         #Draw canvas to show updated graph
         self.frames[GraphPage].canvas.draw()
+        
+        print(time.time() - time_of_start)
         
         
     def findtopX(self, values, X):
