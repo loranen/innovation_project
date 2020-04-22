@@ -16,6 +16,11 @@ YAMNet depends on the following Python packages:
 * [`resampy`](http://resampy.readthedocs.io/en/latest/)
 * [`tensorflow`](http://www.tensorflow.org/)
 * [`pysoundfile`](https://pysoundfile.readthedocs.io/)
+* [`matplotlib`](https://matplotlib.org/)
+* [`soundfile`](https://pysoundfile.readthedocs.io/en/latest/)
+* [`params`](https://pypi.org/project/py-params/
+* [`recorder`](https://pypi.org/project/recorder/)
+
 
 These are all easily installable via, e.g., `pip install numpy` (as in the
 example command sequence below).
